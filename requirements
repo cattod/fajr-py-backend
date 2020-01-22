@@ -1,0 +1,11 @@
+bottle
+sqlalchemy
+psycopg2-binary
+alembic
+python-magic
+redis
+mongosql
+jsonschema
+requests
+kavenegar
+elasticsearch
