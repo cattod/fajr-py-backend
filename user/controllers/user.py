@@ -1,10 +1,7 @@
 import hashlib
 import json
 from bottle import response
-
 from app_redis import app_redis as redis
-
-from enums import Permissions
 from log import LogMsg, logger
 from helper import model_to_dict, Http_error, edit_basic_data, \
     populate_basic_data
@@ -25,8 +22,6 @@ def add(db_session, data, username):
     schema_validate(data, USER_ADD_SCHEMA_PATH)
     logger.debug(LogMsg.SCHEMA_CHECKED)
     new_username = data.get('username')
-
-    # adder = check_user(username,db_session)
 
     user = check_by_username(new_username, db_session)
     if user:
@@ -194,7 +189,6 @@ def edit(id, db_session, data, username):
                          {'password': 'incorrect password'})
             raise Http_error(403, Message.INVALID_PASSWORD)
     for key, value in data.items():
-        # TODO  if key is valid attribute of class
         setattr(model_instance, key, value)
     edit_basic_data(model_instance, username, data.get('tags'))
     user_dict = user_to_dict(model_instance)
@@ -227,13 +221,6 @@ def user_to_dict(user):
 
 def edit_profile(id, db_session, data, username):
     logger.info(LogMsg.START, username)
-    if "id" in data.keys():
-        del data["id"]
-    if "person_id" in data.keys():
-        del data["person_id"]
-    if ('username' or 'password') in data.keys():
-        logger.error(LogMsg.NOT_EDITABLE, 'username , password')
-        raise Http_error(400, Message.NOT_EDITABLE)
 
     logger.debug(LogMsg.EDIT_REQUST, data)
 
@@ -251,7 +238,6 @@ def edit_profile(id, db_session, data, username):
                 raise Http_error(404, LogMsg.PERSON_NOT_EXISTS)
 
         else:
-            del data['current_book']
             person = add_person(db_session, data, username)
             user.person_id = person.id
 

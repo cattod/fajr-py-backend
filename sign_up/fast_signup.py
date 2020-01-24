@@ -1,11 +1,10 @@
 import json
 
 from configs import SIGNUP_USER
-from helper import Http_error, model_to_dict, check_schema
+from helper import Http_error, model_to_dict
 from log import logger, LogMsg
 from app_redis import app_redis as redis
 from messages import Message
-from repository.user_repo import check_by_id
 from send_message.send_message import send_message
 
 from user.controllers.user import add as add_user, user_to_dict

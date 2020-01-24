@@ -1,0 +1,90 @@
+from infrastructure.schema_validator import schema_validate
+from log import logger, LogMsg
+from helper import populate_basic_data, model_to_dict, Http_error, edit_basic_data, \
+    Http_response
+from messages import Message
+from movie.constants import MOVIE_ADD_SCHEMA_PATH, MOVIE_EDIT_SCHEMA_PATH
+from movie.models import Movie
+
+
+def add(data,db_session,username):
+    logger.info(LogMsg.START, username)
+    schema_validate(data, MOVIE_ADD_SCHEMA_PATH)
+    logger.debug(LogMsg.SCHEMA_CHECKED)
+    model_instance = Movie()
+    populate_basic_data(model_instance,username,data.get('tags'))
+    logger.debug(LogMsg.POPULATING_BASIC_DATA)
+    model_instance.description = data.get('description')
+    model_instance.title = data.get('title')
+    model_instance.images = data.get('images')
+    model_instance.director = data.get('director')
+    model_instance.producer = data.get('producer')
+    model_instance.pub_year = data.get('pub_year')
+    model_instance.genre = data.get('genre')
+    model_instance.writer = data.get('writer')
+
+    db_session.add(model_instance)
+    logger.debug(LogMsg.DB_ADD)
+    logger.info(LogMsg.END,model_to_dict(model_instance))
+    return model_instance
+
+def get(id,db_session,username):
+    logger.info(LogMsg.START,username)
+    result =db_session.query(Movie).filter(Movie.id==id).first()
+    final_res = model_to_dict(result)
+    logger.debug(LogMsg.GET_SUCCESS,final_res)
+    logger.info(LogMsg.END)
+    return final_res
+
+def get_all(data, db_session, username):
+    logger.info(LogMsg.START, username)
+
+    if data.get('sort') is None:
+        data['sort'] = ['creation_date-']
+
+    result = Movie.mongoquery(
+        db_session.query(Movie)).query(
+        **data).end().all()
+    final_res = []
+    for item in result:
+        final_res.append(model_to_dict(item))
+
+    logger.debug(LogMsg.GET_SUCCESS, final_res)
+    logger.info(LogMsg.END)
+
+    return final_res
+
+def edit(id,data,db_session,username):
+    logger.info(LogMsg.START, username)
+    schema_validate(data, MOVIE_EDIT_SCHEMA_PATH)
+    logger.debug(LogMsg.SCHEMA_CHECKED)
+    model_instance = db_session.query(Movie).filter(Movie.id==id).first()
+    if model_instance is None:
+        logger.error(LogMsg.NOT_FOUND,{'movie_id':id})
+        raise Http_error(404,Message.NOT_FOUND)
+    try:
+        for key, value in data.items():
+            # TODO  if key is valid attribute of class
+            setattr(model_instance, key, value)
+        edit_basic_data(model_instance, username, data.get('tags'))
+        logger.debug(LogMsg.EDIT_SUCCESS,model_to_dict(model_instance))
+    except:
+        logger.exception(LogMsg.EDIT_FAILED,exc_info=True)
+        raise Http_error(409,Message.EDIT_FAILED)
+    logger.info(LogMsg.END)
+    return model_to_dict(model_instance)
+
+def delete(id,db_session,username):
+    logger.info(LogMsg.START,username)
+    model_instance = db_session.query(Movie).filter(Movie.id==id).first()
+    if model_instance is None:
+        logger.error(LogMsg.NOT_FOUND, {'movie_id': id})
+        raise Http_error(404, Message.NOT_FOUND)
+    try:
+        db_session.delete(model_instance)
+        logger.debug(LogMsg.DELETE_SUCCESS,{'movie_id':id})
+    except:
+        logger.exception(LogMsg.DELETE_FAILED,exc_info=True)
+        raise Http_error(409,Message.DELETE_FAILED)
+    logger.info(LogMsg.END)
+    return Http_response(204,True)

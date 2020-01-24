@@ -65,8 +65,6 @@ def get(id, db_session, username=None):
         logger.debug(LogMsg.MODEL_GETTING_FAILED)
         raise Http_error(404, Message.NOT_FOUND)
 
-    if username is not None:
-        user = check_user(username, db_session)
     logger.info(LogMsg.END)
     return person_dict
 
