@@ -6,7 +6,7 @@ from datetime import datetime
 
 from bottle import request
 
-log_file = os.environ.get('log_path')
+log_file = os.environ.get('log_path') or '/home/nsm/PycharmProjects/FajrMovieApp/logs/app.log'
 print('log_file : {}'.format(log_file))
 
 

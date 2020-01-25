@@ -54,3 +54,4 @@ class Message:
     SCHEMA_NOT_VALID = 'schema_not_valid'
     PERSON_IS_NOT_LEGAL = 'person_is_not_legal'
     PERSON_MUST_HAVE_USER = 'person_must_have_user'
+    LEGAL_PERSON_USER_RESTRICTION = 'legal_person_user_restriction'

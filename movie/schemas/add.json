@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "genre": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+     "image": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+      }
+    },
+    "producer": {
+      "type": "string"
+    },"writer": {
+      "type": "string"
+    },"director": {
+      "type": "string"
+    },"pub_year": {
+      "type": "string"
+    },"title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "title"
+  ],
+  "additionalProperties": true
+}
