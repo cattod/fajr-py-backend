@@ -206,7 +206,6 @@ def person_to_dict(person, db_session=None):
         'address': person.address,
         'bio': person.bio,
         'cell_no': person.cell_no,
-        'current_book_id': person.current_book_id,
         'email': person.email,
         'image': person.image,
         'name': person.name,

@@ -1,0 +1,44 @@
+{
+  "type": "object",
+  "properties": {
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "movie_id": {
+      "type": "string",
+        "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+
+    },"person_id": {
+      "type": "string",
+        "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+
+    },"overall_rate": {
+      "type": "number"
+    },"comment": {
+      "type": "string"
+    },"novel": {
+      "type": "number"
+    },"character": {
+      "type": "number"
+    },"reason": {
+      "type": "number"
+    },"directing": {
+      "type": "number"
+    },"acting": {
+      "type": "number"
+    },"editing": {
+      "type": "number"
+    },"visualization": {
+      "type": "number"
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "required": [
+  ],
+  "additionalProperties": true
+}
