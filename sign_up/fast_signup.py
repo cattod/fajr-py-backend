@@ -51,7 +51,7 @@ def signup(data, db_session, *args, **kwargs):
     user_welcoming_data = {'receptor': cell_no,
                            'token': full_name,
                            'type':'sms',
-                           'template':'fajrwelcoming'}
+                           'template':'welcoming'}
     send_message(user_welcoming_data)
     logger.debug(LogMsg.SMS_SENT,user_welcoming_data)
 
