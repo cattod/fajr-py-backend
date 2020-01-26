@@ -11,10 +11,6 @@
       "type": "string",
         "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
 
-    },"person_id": {
-      "type": "string",
-        "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
-
     },"overall_rate": {
       "type": "number"
     },"comment": {
@@ -39,6 +35,7 @@
     }
   },
   "required": [
+    "movie_id"
   ],
   "additionalProperties": true
 }
