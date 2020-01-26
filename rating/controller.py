@@ -93,7 +93,7 @@ def get_all(data, db_session, username):
 
     if data.get('sort') is None:
         data['sort'] = ['creation_date-']
-    data['person_id'] = user.person_id
+    data['filter']['person_id'] = user.person_id
 
     result = Rating.mongoquery(
         db_session.query(Rating)).query(
