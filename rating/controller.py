@@ -3,6 +3,7 @@ from log import logger, LogMsg
 from helper import populate_basic_data, model_to_dict, Http_error, edit_basic_data, \
     Http_response, model_basic_dict
 from messages import Message
+from repository.user_repo import check_user
 from user.controllers.person import person_to_dict
 from .constants import RATING_ADD_SCHEMA_PATH, RATING_EDIT_SCHEMA_PATH
 from .models import Rating
@@ -10,9 +11,10 @@ from .models import Rating
 
 def add(data, db_session, username):
     logger.info(LogMsg.START, username)
-    # schema_validate(data, RATING_ADD_SCHEMA_PATH)
-    # logger.debug(LogMsg.SCHEMA_CHECKED)
-    rated = internal_get(data.get('person_id'), data.get('movie_id'), db_session)
+    schema_validate(data, RATING_ADD_SCHEMA_PATH)
+    logger.debug(LogMsg.SCHEMA_CHECKED)
+    user = check_user(username,db_session)
+    rated = internal_get(user.person_id, data.get('movie_id'), db_session)
     if rated is not None:
         result =  edit(rated.id, data, db_session, username)
         return result
@@ -21,7 +23,7 @@ def add(data, db_session, username):
     logger.debug(LogMsg.POPULATING_BASIC_DATA)
 
     model_instance.movie_id = data.get('movie_id')
-    model_instance.person_id = data.get('person_id')
+    model_instance.person_id = user.person_id
     model_instance.comment = data.get('comment')
     model_instance.overall_rate = data.get('overall_rate')
     model_instance.novel = data.get('novel')
