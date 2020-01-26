@@ -13,10 +13,10 @@ def add(data, db_session, username):
     logger.info(LogMsg.START, username)
     schema_validate(data, RATING_ADD_SCHEMA_PATH)
     logger.debug(LogMsg.SCHEMA_CHECKED)
-    user = check_user(username,db_session)
+    user = check_user(username, db_session)
     rated = internal_get(user.person_id, data.get('movie_id'), db_session)
     if rated is not None:
-        result =  edit(rated.id, data, db_session, username)
+        result = edit(rated.id, data, db_session, username)
         return result
     model_instance = Rating()
     populate_basic_data(model_instance, username, data.get('tags'))
@@ -82,19 +82,28 @@ def get(id, db_session, username):
     return final_res
 
 
+def get_by_movie(movie_id, db_session, username):
+    logger.info(LogMsg.START, username)
+    user = check_user(username, db_session)
+    result = db_session.query(Rating).filter(Rating.movie_id == movie_id,
+                                             Rating.person_id == user.person_id).first()
+    if result is None:
+        return {}
+    final_res = rating_to_dict(result)
+    logger.debug(LogMsg.GET_SUCCESS, final_res)
+    logger.info(LogMsg.END)
+    return final_res
+
+
 def internal_get(person_id, movie_id, db_session):
-    return  db_session.query(Rating).filter(Rating.person_id == person_id,
+    return db_session.query(Rating).filter(Rating.person_id == person_id,
                                            Rating.movie_id == movie_id).first()
 
 
 def get_all(data, db_session, username):
     logger.info(LogMsg.START, username)
-    user = check_user(username,db_session)
-
     if data.get('sort') is None:
         data['sort'] = ['creation_date-']
-    data['filter']['person_id'] = user.person_id
-
     result = Rating.mongoquery(
         db_session.query(Rating)).query(
         **data).end().all()
@@ -112,10 +121,14 @@ def edit(id, data, db_session, username):
     logger.info(LogMsg.START, username)
     # schema_validate(data, RATING_EDIT_SCHEMA_PATH)
     # logger.debug(LogMsg.SCHEMA_CHECKED)
+    user = check_user(username, db_session)
     model_instance = db_session.query(Rating).filter(Rating.id == id).first()
     if model_instance is None:
         logger.error(LogMsg.NOT_FOUND, {'Rating_id': id})
         raise Http_error(404, Message.NOT_FOUND)
+    if model_instance.person_id != user.person_id:
+        logger.error(LogMsg.NOT_ACCESSED, username)
+        raise Http_error(403, Message.ACCESS_DENIED)
     try:
         for key, value in data.items():
             setattr(model_instance, key, value)
@@ -149,51 +162,51 @@ def rating_to_dict(model):
         logger.error(LogMsg.NOT_FOUND)
         return {}
     result = {
-    'movie_id': model.movie_id ,
-    'person_id':model.person_id ,
-    'comment':model.comment ,
-    'overall_rate':model.overall_rate,
-    'novel':model.novel,
-    'character':model.character ,
-    'reason':model.reason ,
-    'directing':model.directing ,
-    'true_vision_of_enemy':model.true_vision_of_enemy,
-    'iranian_life_style':model.iranian_life_style ,
-    'hope':model.hope ,
-    'bright_future_exposure':model.bright_future_exposure ,
-    'theism':model.theism ,
-    'justice_seeking':model.justice_seeking ,
-    'feminism_exposure':model.feminism_exposure ,
-    'individual_social_behavior':model.individual_social_behavior ,
-    'family_subject':model.family_subject ,
-    'alcoholic_promotion':model.alcoholic_promotion,
-    'gambling_promotion':model.gambling_promotion ,
-    'breaking_law_encouragement':model.breaking_law_encouragement ,
-    'suicide_encouragement':model.suicide_encouragement ,
-    'horror_content':model.horror_content ,
-    'addiction_promotion':model.addiction_promotion ,
-    'unsuitable_wearing':model.unsuitable_wearing ,
-    'sexual_content':model.sexual_content ,
-    'insulting_range':model.insulting_range ,
-    'violence_range':model.violence_range ,
-    'music':model.music,
-    'sound':model.sound ,
-    'visualization':model.visualization,
-    'editing':model.editing ,
-    'acting':model.acting ,
-    'true_historiography':model.true_historiography ,
-    'question_1':model.question_1 ,
-    'question_2':model.question_2 ,
-    'question_3':model.question_3 ,
-    'question_4':model.question_4 ,
-    'question_5':model.question_5 ,
-    'question_6':model.question_6 ,
-    'question_7':model.question_7 ,
-    'question_8':model.question_8 ,
-    'question_9':model.question_9 ,
-    'question_10':model.question_10,
-    'person':person_to_dict(model.person),
-    'movie':model_to_dict(model.movie)}
+        'movie_id': model.movie_id,
+        'person_id': model.person_id,
+        'comment': model.comment,
+        'overall_rate': model.overall_rate,
+        'novel': model.novel,
+        'character': model.character,
+        'reason': model.reason,
+        'directing': model.directing,
+        'true_vision_of_enemy': model.true_vision_of_enemy,
+        'iranian_life_style': model.iranian_life_style,
+        'hope': model.hope,
+        'bright_future_exposure': model.bright_future_exposure,
+        'theism': model.theism,
+        'justice_seeking': model.justice_seeking,
+        'feminism_exposure': model.feminism_exposure,
+        'individual_social_behavior': model.individual_social_behavior,
+        'family_subject': model.family_subject,
+        'alcoholic_promotion': model.alcoholic_promotion,
+        'gambling_promotion': model.gambling_promotion,
+        'breaking_law_encouragement': model.breaking_law_encouragement,
+        'suicide_encouragement': model.suicide_encouragement,
+        'horror_content': model.horror_content,
+        'addiction_promotion': model.addiction_promotion,
+        'unsuitable_wearing': model.unsuitable_wearing,
+        'sexual_content': model.sexual_content,
+        'insulting_range': model.insulting_range,
+        'violence_range': model.violence_range,
+        'music': model.music,
+        'sound': model.sound,
+        'visualization': model.visualization,
+        'editing': model.editing,
+        'acting': model.acting,
+        'true_historiography': model.true_historiography,
+        'question_1': model.question_1,
+        'question_2': model.question_2,
+        'question_3': model.question_3,
+        'question_4': model.question_4,
+        'question_5': model.question_5,
+        'question_6': model.question_6,
+        'question_7': model.question_7,
+        'question_8': model.question_8,
+        'question_9': model.question_9,
+        'question_10': model.question_10,
+        'person': person_to_dict(model.person),
+        'movie': model_to_dict(model.movie)}
     basic_attrs = model_basic_dict(model)
     result.update(basic_attrs)
 
