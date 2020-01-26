@@ -89,9 +89,11 @@ def internal_get(person_id, movie_id, db_session):
 
 def get_all(data, db_session, username):
     logger.info(LogMsg.START, username)
+    user = check_user(username,db_session)
 
     if data.get('sort') is None:
         data['sort'] = ['creation_date-']
+    data['person_id'] = user.person_id
 
     result = Rating.mongoquery(
         db_session.query(Rating)).query(
