@@ -5,9 +5,9 @@ from helper import value, Http_error
 from log import logger, LogMsg
 from messages import Message
 
-sms_token_url = value('sms_token_url', 'https://RestfulSms.com/api/Token')
+sms_token_url = value('sms_token_url', None)
 sms_security_key = value('sms_security_key', 'Jame_jam@nsm5msd&*!')
-sms_api_key = value('sms_api_key', '51493c0cc42cd23559c73c0c')
+sms_api_key = value('sms_api_key', None)
 sms_timeout = value('sms_timeout', 20)
 sms_send_url = value('sms_send_url', 'https://RestfulSms.com/api/MessageSend')
 sms_line_no = value('sms_line_no','10005195')
