@@ -72,6 +72,8 @@ def add(data, db_session, username):
 def get(id, db_session, username):
     logger.info(LogMsg.START, username)
     result = db_session.query(Rating).filter(Rating.id == id).first()
+    if result is None:
+        return {}
     final_res = rating_to_dict(result)
     logger.debug(LogMsg.GET_SUCCESS, final_res)
     logger.info(LogMsg.END)
@@ -139,8 +141,11 @@ def delete(id, db_session, username):
 
 
 def rating_to_dict(model):
+    if model is None:
+        logger.error(LogMsg.NOT_FOUND)
+        return {}
     result = {
-       'movie_id': model.movie_id ,
+    'movie_id': model.movie_id ,
     'person_id':model.person_id ,
     'comment':model.comment ,
     'overall_rate':model.overall_rate,

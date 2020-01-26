@@ -9,3 +9,4 @@ jsonschema
 requests
 kavenegar
 elasticsearch
+gunicorn
