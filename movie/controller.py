@@ -5,6 +5,7 @@ from helper import populate_basic_data, model_to_dict, Http_error, edit_basic_da
 from messages import Message
 from movie.constants import MOVIE_ADD_SCHEMA_PATH, MOVIE_EDIT_SCHEMA_PATH
 from movie.models import Movie
+from repository.rating_repo import users_rated_movie_ids
 
 
 def add(data,db_session,username):
@@ -46,8 +47,13 @@ def get_all(data, db_session, username):
         db_session.query(Movie)).query(
         **data).end().all()
     final_res = []
+    rated_movies = users_rated_movie_ids(username, db_session)
     for item in result:
-        final_res.append(model_to_dict(item))
+        model_dict = model_to_dict(item)
+        model_dict['rated_by_user'] = False
+        if item.movie_id in rated_movies:
+            model_dict['rated_by_user'] = True
+        final_res.append(model_dict)
 
     logger.debug(LogMsg.GET_SUCCESS, final_res)
     logger.info(LogMsg.END)
