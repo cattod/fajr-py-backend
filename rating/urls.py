@@ -8,7 +8,7 @@ def call_router(app):
 
     app.route('/ratings/<id>', 'GET', get, apply=wrappers)
     app.route('/ratings/movie/<movie_id>', 'GET', get_by_movie, apply=wrappers)
-    app.route('/ratings/csv-report', 'GET', to_csv, apply=[check_auth, inject_db,timeit])
+    app.route('/ratings/report/csv', 'GET', to_csv, apply=[check_auth, inject_db,timeit])
 
     app.route('/ratings/<id>', 'DELETE', delete, apply=[check_auth, inject_db,timeit])
     app.route('/ratings', 'POST', add, apply=data_plus_wrappers)
