@@ -1,12 +1,20 @@
+import csv
+
+from file_handler.handle_file import return_file, delete_files, return_and_delete_file
 from infrastructure.schema_validator import schema_validate
 from log import logger, LogMsg
 from helper import populate_basic_data, model_to_dict, Http_error, edit_basic_data, \
-    Http_response, model_basic_dict
+    Http_response, model_basic_dict, value
 from messages import Message
 from repository.user_repo import check_user
 from user.controllers.person import person_to_dict
 from .constants import RATING_ADD_SCHEMA_PATH, RATING_EDIT_SCHEMA_PATH
 from .models import Rating
+
+save_path = value('save_path',None)
+if save_path is None:
+    logger.error(LogMsg.APP_CONFIG_INCORRECT,{'save_path':None})
+    raise Http_error(500,Message.APP_CONFIG_MISSING)
 
 
 def add(data, db_session, username):
@@ -211,3 +219,29 @@ def rating_to_dict(model):
     result.update(basic_attrs)
 
     return result
+
+
+def to_csv(db_session, username):
+    data =list( get_all({'sort':'creation_date-'}, db_session, username))
+    if len(data)<1:
+        logger.error(LogMsg.NO_CONTENT_FOR_REPORT,'Ratings')
+        raise Http_error(404,Message.NO_CONTENT_IN_TABLE)
+
+    for item in data:
+        person = item.get('person')
+        movie = item.get('movie')
+        item['rating_person'] = person.get('full_name')
+        item['move_title'] = movie.get('title')
+        item['move_director'] = movie.get('director')
+        item['move_writer'] = movie.get('writer')
+        item['move_producer'] = movie.get('producer')
+        del item['person']
+        del item['movie']
+
+    keys = data[0].keys()
+
+    with open('{}/ratings.csv'.format(save_path), 'w', encoding='utf8', newline='') as output_file:
+        dict_writer = csv.DictWriter(output_file, keys)
+        dict_writer.writeheader()
+        dict_writer.writerows(data)
+    return return_and_delete_file('ratings.csv')

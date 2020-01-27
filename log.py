@@ -6,7 +6,8 @@ from datetime import datetime
 
 from bottle import request
 
-log_file = os.environ.get('log_path') or '/home/nsm/PycharmProjects/FajrMovieApp/logs/app.log'
+log_file = os.environ.get(
+    'log_path') or '/home/nsm/PycharmProjects/FajrMovieApp/logs/app.log'
 print('log_file : {}'.format(log_file))
 
 
@@ -29,6 +30,7 @@ def get_request_id():
             return request.JJP_RID
     except RuntimeError:
         return 'NO_RID'
+
 
 class GZipRotator:
     def __call__(self, source, dest):
@@ -461,6 +463,8 @@ class LogMsg:
     FILE_NOT_EXISTS = 'file by this path not exists: %s'
     GET_FILE_FAILED = 'file can not be got'
     APP_CONFIG_INCORRECT = 'APP Config is incomplete : %s'
+
+    NO_CONTENT_FOR_REPORT = 'there is no content in table %s for generating csv file'
 
     COMMIT_ERROR = 'commiting to db encountered problem'
     QUERY_OBJECT = 'query object is : %s'

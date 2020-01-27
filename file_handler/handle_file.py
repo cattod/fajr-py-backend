@@ -68,6 +68,21 @@ def return_file(filename, **kwargs):
         raise Http_error(404,Message.NOT_FOUND)
 
 
+def return_and_delete_file(filename, **kwargs):
+    try:
+
+        response.body = static_file(filename, root=save_path)
+        file_path = '{}/{}'.format(save_path,filename)
+        if os.path.isfile(file_path):
+            logger.debug(LogMsg.FILE_EXISTS, file_path)
+            response.content_type = file_mime_type(file_path)
+            delete_files([filename])
+        else:
+            logger.debug(LogMsg.FILE_NOT_EXISTS, file_path)
+        return response
+    except:
+        logger.exception(LogMsg.FILE_NOT_EXISTS,exc_info=True)
+        raise Http_error(404,Message.NOT_FOUND)
 
 def file_mime_type(file_path):
     m = magic.from_file(file_path, mime=True)
