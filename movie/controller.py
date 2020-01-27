@@ -51,7 +51,7 @@ def get_all(data, db_session, username):
     for item in result:
         model_dict = model_to_dict(item)
         model_dict['rated_by_user'] = False
-        if item.movie_id in rated_movies:
+        if item.id in rated_movies:
             model_dict['rated_by_user'] = True
         final_res.append(model_dict)
 
