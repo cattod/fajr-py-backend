@@ -99,7 +99,7 @@ def register(data, db_session):
     data = {'receptor': cell_no,
             'token': password,
             'type': 'sms',
-            'template': 'register'}
+            'template': 'ratingregister'}
     logger.debug(LogMsg.SEND_CODE_BY_SMS.format(cell_no))
     sent_data = send_message(data)
 
@@ -141,7 +141,7 @@ def forget_pass(data, db_session):
                         'token': user.username,
                         'token2': password,
                         'type': 'sms',
-                        'template': 'resetPassword'}
+                        'template': 'fajrresetPassword'}
         send_message(sending_data)
         logger.debug(LogMsg.SMS_SENT, sending_data)
 
