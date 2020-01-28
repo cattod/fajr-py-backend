@@ -17,7 +17,8 @@
             "pattern": "[0-9a]{11}"
         },
         "username": {
-            "type": "string"
+            "type": "string",
+            "pattern": "[0-9a]{11}"
         },
         "password": {
             "type": "string"
