@@ -7,7 +7,7 @@ class Person(PrimaryModel,Base):
 
     __tablename__ = 'persons'
 
-    name = Column(String,nullable=False)
+    name = Column(String,nullable=True)
     last_name = Column(String)
     full_name = Column(String)
     address = Column(String)
