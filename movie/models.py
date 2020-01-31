@@ -1,6 +1,5 @@
-from sqlalchemy import Column, String, ForeignKey, ARRAY
+from sqlalchemy import Column, String, ARRAY, Integer
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import relationship
 
 from db_session import PrimaryModel, Base
 
@@ -16,5 +15,6 @@ class Movie(PrimaryModel,Base):
     images = Column(ARRAY(UUID))
     genre = Column(ARRAY(String))
     pub_year = Column(String)
+    order_filed = Column(Integer,unique=True)
 
 
