@@ -15,6 +15,6 @@ class Movie(PrimaryModel,Base):
     images = Column(ARRAY(UUID))
     genre = Column(ARRAY(String))
     pub_year = Column(String)
-    order_filed = Column(Integer,unique=True)
+    order_filed = Column(Integer)
 
 
