@@ -2,6 +2,7 @@ import hashlib
 import json
 from bottle import response
 from app_redis import app_redis as redis
+from check_permission import get_user_permissions
 from log import LogMsg, logger
 from helper import model_to_dict, Http_error, edit_basic_data, \
     populate_basic_data
@@ -91,6 +92,8 @@ def get_profile(username, db_session):
     if model_instance:
         profile = dict(get_person_profile(model_instance.person_id, db_session,
                                           username))
+        permissions, groups = get_user_permissions(username, db_session)
+        logger.debug(LogMsg.GET_SUCCESS, profile)
 
     else:
         logger.debug(LogMsg.NOT_FOUND, {'user.username': username})
@@ -98,6 +101,8 @@ def get_profile(username, db_session):
 
     result = model_to_dict(model_instance)
     result['person'] = profile
+    result['permissions'] = list(permissions)
+    result['permission_groups'] = list(groups)
 
     del result['password']
     logger.debug(LogMsg.USER_PROFILE_IS, result)
