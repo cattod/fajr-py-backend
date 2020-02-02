@@ -1,3 +1,4 @@
+from check_permission import validate_permissions_and_access
 from infrastructure.schema_validator import schema_validate
 from log import logger, LogMsg
 from helper import populate_basic_data, model_to_dict, Http_error, edit_basic_data, \
@@ -12,6 +13,11 @@ def add(data,db_session,username):
     logger.info(LogMsg.START, username)
     schema_validate(data, MOVIE_ADD_SCHEMA_PATH)
     logger.debug(LogMsg.SCHEMA_CHECKED)
+
+    logger.debug(LogMsg.PERMISSION_CHECK, username)
+    validate_permissions_and_access(username, db_session, 'ADD_MOVIE')
+    logger.debug(LogMsg.PERMISSION_VERIFIED)
+
     model_instance = Movie()
     populate_basic_data(model_instance,username,data.get('tags'))
     logger.debug(LogMsg.POPULATING_BASIC_DATA)
@@ -31,6 +37,11 @@ def add(data,db_session,username):
 
 def get(id,db_session,username):
     logger.info(LogMsg.START,username)
+
+    logger.debug(LogMsg.PERMISSION_CHECK, username)
+    validate_permissions_and_access(username, db_session, 'GET_MOVIE')
+    logger.debug(LogMsg.PERMISSION_VERIFIED)
+
     result =db_session.query(Movie).filter(Movie.id==id).first()
     final_res = model_to_dict(result)
     logger.debug(LogMsg.GET_SUCCESS,final_res)
@@ -39,6 +50,10 @@ def get(id,db_session,username):
 
 def get_all(data, db_session, username):
     logger.info(LogMsg.START, username)
+
+    logger.debug(LogMsg.PERMISSION_CHECK, username)
+    validate_permissions_and_access(username, db_session, 'GET_MOVIE')
+    logger.debug(LogMsg.PERMISSION_VERIFIED)
 
     if data.get('sort') is None:
         data['sort'] = ['creation_date-']
@@ -64,6 +79,12 @@ def edit(id,data,db_session,username):
     logger.info(LogMsg.START, username)
     schema_validate(data, MOVIE_EDIT_SCHEMA_PATH)
     logger.debug(LogMsg.SCHEMA_CHECKED)
+
+
+    logger.debug(LogMsg.PERMISSION_CHECK, username)
+    validate_permissions_and_access(username, db_session, 'EDIT_MOVIE')
+    logger.debug(LogMsg.PERMISSION_VERIFIED)
+
     model_instance = db_session.query(Movie).filter(Movie.id==id).first()
     if model_instance is None:
         logger.error(LogMsg.NOT_FOUND,{'movie_id':id})
@@ -82,6 +103,11 @@ def edit(id,data,db_session,username):
 
 def delete(id,db_session,username):
     logger.info(LogMsg.START,username)
+
+    logger.debug(LogMsg.PERMISSION_CHECK, username)
+    validate_permissions_and_access(username, db_session, 'DELETE_MOVIE')
+    logger.debug(LogMsg.PERMISSION_VERIFIED)
+
     model_instance = db_session.query(Movie).filter(Movie.id==id).first()
     if model_instance is None:
         logger.error(LogMsg.NOT_FOUND, {'movie_id': id})
