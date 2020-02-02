@@ -1,5 +1,6 @@
 import csv
 
+from check_permission import validate_permissions_and_access
 from file_handler.handle_file import return_file, delete_files, return_and_delete_file
 from infrastructure.schema_validator import schema_validate
 from log import logger, LogMsg
@@ -222,6 +223,11 @@ def rating_to_dict(model):
 
 
 def to_csv(db_session, username):
+
+    logger.debug(LogMsg.PERMISSION_CHECK, username)
+    validate_permissions_and_access(username, db_session, 'GET_MOVIE')
+    logger.debug(LogMsg.PERMISSION_VERIFIED)
+
     data =list( get_all({'sort':'creation_date-'}, db_session, username))
     if len(data)<1:
         logger.error(LogMsg.NO_CONTENT_FOR_REPORT,'Ratings')
