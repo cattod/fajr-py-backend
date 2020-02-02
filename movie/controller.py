@@ -37,12 +37,10 @@ def add(data,db_session,username):
 
 def get(id,db_session,username):
     logger.info(LogMsg.START,username)
-
-    logger.debug(LogMsg.PERMISSION_CHECK, username)
-    validate_permissions_and_access(username, db_session, 'GET_MOVIE')
-    logger.debug(LogMsg.PERMISSION_VERIFIED)
-
     result =db_session.query(Movie).filter(Movie.id==id).first()
+    if result is None:
+        logger.error(LogMsg.NOT_FOUND,id)
+        raise Http_error(404,Message.NOT_FOUND)
     final_res = model_to_dict(result)
     logger.debug(LogMsg.GET_SUCCESS,final_res)
     logger.info(LogMsg.END)
