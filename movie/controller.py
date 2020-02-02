@@ -51,10 +51,6 @@ def get(id,db_session,username):
 def get_all(data, db_session, username):
     logger.info(LogMsg.START, username)
 
-    logger.debug(LogMsg.PERMISSION_CHECK, username)
-    validate_permissions_and_access(username, db_session, 'GET_MOVIE')
-    logger.debug(LogMsg.PERMISSION_VERIFIED)
-
     if data.get('sort') is None:
         data['sort'] = ['creation_date-']
 

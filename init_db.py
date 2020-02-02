@@ -20,7 +20,7 @@ def init_db():
     db_session.add(person)
     db_session.flush()
 
-    print('person added by data : {name:{},last_name:{},id:{}'.format(person.name,
+    print('person added by data : name:{},last_name:{},id:{}'.format(person.name,
                                                                       person.last_name,
                                                                       person.id))
 
@@ -36,7 +36,7 @@ def init_db():
     db_session.add(user)
     db_session.flush()
 
-    print('user added by data : {username:{},password:{},id:{}'.format(user.username,
+    print('user added by data : username:{},password:{},id:{}'.format(user.username,
                                                                       user.password,
                                                                       user.id))
 
@@ -51,7 +51,7 @@ def init_db():
     db_session.add(group)
     db_session.flush()
 
-    print('group added by data : {title:{},person_id:{},id:{}'.format(group.title,
+    print('group added by data : title:{},person_id:{},id:{}'.format(group.title,
                                                                        group.person_id,
                                                                        group.id))
 
@@ -64,7 +64,7 @@ def init_db():
     gu.user_id = user.id
 
     db_session.add(gu)
-    print('user_group added by data : {group_id:{},user_id:{},id:{}'.format(gu.group_id,
+    print('user_group added by data : group_id:{},user_id:{},id:{}'.format(gu.group_id,
                                                                       gu.user_id,
                                                                       gu.id))
 
