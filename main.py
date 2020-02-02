@@ -11,6 +11,8 @@ from app_token.urls import call_router as token_routes
 from movie.urls import call_router as movie_routes
 from rating.urls import call_router as rating_routes
 from file_handler.urls import call_router as file_routes
+from permission.urls import call_router as permission_routes
+from group.urls import call_router as group_routes
 
 app = Bottle()
 
@@ -24,6 +26,8 @@ token_routes(app)
 movie_routes(app)
 rating_routes(app)
 file_routes(app)
+permission_routes(app)
+group_routes(app)
 
 
 
