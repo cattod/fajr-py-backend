@@ -1,5 +1,7 @@
 import csv
 
+from bottle import response
+
 from check_permission import validate_permissions_and_access
 from file_handler.handle_file import return_file, delete_files, return_and_delete_file
 from infrastructure.schema_validator import schema_validate
@@ -7,7 +9,7 @@ from log import logger, LogMsg
 from helper import populate_basic_data, model_to_dict, Http_error, edit_basic_data, \
     Http_response, model_basic_dict, value
 from messages import Message
-from repository.user_repo import check_user
+from repository.user_repo import check_user, user_by_person
 from user.controllers.person import person_to_dict
 from .constants import RATING_ADD_SCHEMA_PATH, RATING_EDIT_SCHEMA_PATH
 from .models import Rating
@@ -228,6 +230,7 @@ def to_csv(db_session, username):
     validate_permissions_and_access(username, db_session, 'GET_MOVIE')
     logger.debug(LogMsg.PERMISSION_VERIFIED)
 
+
     data =list( get_all({'sort':'creation_date-'}, db_session, username))
     if len(data)<1:
         logger.error(LogMsg.NO_CONTENT_FOR_REPORT,'Ratings')
@@ -236,11 +239,14 @@ def to_csv(db_session, username):
     for item in data:
         person = item.get('person')
         movie = item.get('movie')
-        item['rating_person'] = person.get('full_name')
-        item['move_title'] = movie.get('title')
-        item['move_director'] = movie.get('director')
-        item['move_writer'] = movie.get('writer')
-        item['move_producer'] = movie.get('producer')
+        person_id = person.get('id')
+        user = user_by_person(person_id, db_session)
+        item['voter_username'] = user.username
+        item['voter_name'] = person.get('full_name')
+        item['movie'] = movie.get('title')
+        item['director'] = movie.get('director')
+        item['writer'] = movie.get('writer')
+        item['producer'] = movie.get('producer')
         del item['person']
         del item['movie']
 
@@ -250,4 +256,5 @@ def to_csv(db_session, username):
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
         dict_writer.writerows(data)
+    response.add_header('Content-Disposition','attachment; filename=report.csv')
     return return_and_delete_file('ratings.csv')

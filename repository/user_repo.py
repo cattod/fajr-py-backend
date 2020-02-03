@@ -6,6 +6,9 @@ from user.models import User, Person
 def check_user(username, db_session):
     return db_session.query(User).filter(User.username == username).first()
 
+def user_by_person(person_id,db_session):
+    return db_session.query(User).filter(User.person_id==person_id).first()
+
 def check_by_cell_no(cell_no,db_session):
     user = db_session.query(User).filter(User.username == cell_no).first()
     if not user:
