@@ -239,7 +239,7 @@ def to_csv(db_session, username):
     for item in data:
         person = item.get('person')
         movie = item.get('movie')
-        user = user_by_person(item.person_id, db_session)
+        user = user_by_person(item.get('person_id'), db_session)
         if user is not None:
             item['voter_username'] = user.username
 
