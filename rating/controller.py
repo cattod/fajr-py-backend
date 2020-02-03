@@ -250,6 +250,9 @@ def to_csv(db_session, username):
         item['producer'] = movie.get('producer')
         del item['person']
         del item['movie']
+        del item['id']
+        del item['person_id']
+        del item['movie_id']
 
     keys = data[0].keys()
 
