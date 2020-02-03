@@ -29,6 +29,7 @@ def add(data,db_session,username):
     model_instance.pub_year = data.get('pub_year')
     model_instance.genre = data.get('genre')
     model_instance.writer = data.get('writer')
+    model_instance.order_filed = data.get('order_filed')
 
     db_session.add(model_instance)
     logger.debug(LogMsg.DB_ADD)
