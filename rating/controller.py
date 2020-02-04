@@ -235,9 +235,9 @@ def to_csv(db_session, username):
     if len(result) < 1:
         logger.error(LogMsg.NO_CONTENT_FOR_REPORT, 'Ratings')
         raise Http_error(404, Message.NO_CONTENT_IN_TABLE)
-    final_res = {}
+    final_res = []
     for item in result:
-        final_res.update(csv_model_to_dict(item, db_session))
+        final_res.append(csv_model_to_dict(item, db_session))
     keys = final_res[0].keys()
 
     with open('{}/ratings.csv'.format(save_path), 'w', encoding='utf8',
