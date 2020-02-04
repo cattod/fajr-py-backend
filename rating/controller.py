@@ -175,6 +175,8 @@ def rating_to_dict(model):
     result = {
         'movie_id': model.movie_id,
         'person_id': model.person_id,
+        'person': person_to_dict(model.person),
+        'movie': model_to_dict(model.movie),
         'comment': model.comment,
         'overall_rate': model.overall_rate,
         'novel': model.novel,
@@ -215,9 +217,7 @@ def rating_to_dict(model):
         'question_7': model.question_7,
         'question_8': model.question_8,
         'question_9': model.question_9,
-        'question_10': model.question_10,
-        'person': person_to_dict(model.person),
-        'movie': model_to_dict(model.movie)}
+        'question_10': model.question_10}
     basic_attrs = model_basic_dict(model)
     result.update(basic_attrs)
 
@@ -244,7 +244,7 @@ def to_csv(db_session, username):
             item['voter_username'] = user.username
 
         item['voter_name'] = person.get('full_name')
-        item['movie'] = movie.get('title')
+        item['title'] = movie.get('title')
         item['director'] = movie.get('director')
         item['writer'] = movie.get('writer')
         item['producer'] = movie.get('producer')
