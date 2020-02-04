@@ -295,6 +295,8 @@ def csv_model_to_dict(model, db_session):
         'توضیحات تکمیلی داستان': model.question_1,
         'توضیحات تکمیلی تکنیک': model.question_2,
         'توضیحات تکمیلی هنجار': model.question_3,
-        'توضیحات تکمیلی درونمایه': model.question_4}
+        'توضیحات تکمیلی درونمایه': model.question_4,
+        'تاریخ ارزیابی': model.creation_date}
+
     res.update(items)
     return res
