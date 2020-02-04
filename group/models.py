@@ -1,14 +1,16 @@
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+from sqlalchemy_continuum import make_versioned
 
 from db_session import Base, PrimaryModel
 from sqlalchemy import Column, String, ForeignKey, UniqueConstraint
 
 from user.models import User
 
+make_versioned(user_cls=None)
 
 class Group(Base,PrimaryModel):
-
+    __versioned__ = {}
     __tablename__ = 'groups'
 
     title = Column(String,unique=True,nullable=False)

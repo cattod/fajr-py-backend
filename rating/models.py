@@ -1,12 +1,16 @@
 from sqlalchemy import Column, String, ForeignKey, Boolean, Float
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
+from sqlalchemy_continuum import make_versioned
+
 from db_session import PrimaryModel, Base
 from movie.models import Movie
 from user.models import Person
 
+make_versioned(user_cls=None)
 
 class Rating(PrimaryModel,Base):
+    __versioned__ = {}
     __tablename__ = 'ratings'
 
     movie_id = Column(UUID,ForeignKey(Movie.id),nullable=False)

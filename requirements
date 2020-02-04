@@ -10,3 +10,4 @@ requests
 kavenegar
 elasticsearch
 gunicorn
+SQLAlchemy-Continuum

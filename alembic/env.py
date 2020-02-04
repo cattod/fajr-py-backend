@@ -1,5 +1,6 @@
 from logging.config import fileConfig
 
+import sqlalchemy
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
@@ -30,6 +31,8 @@ from infrastructure.module_loader import load_all
 target_metadata = db_session.Base.metadata
 
 load_all('models')
+
+sqlalchemy.orm.configure_mappers()
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
