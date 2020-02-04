@@ -14,10 +14,10 @@ from user.controllers.person import person_to_dict
 from .constants import RATING_ADD_SCHEMA_PATH, RATING_EDIT_SCHEMA_PATH
 from .models import Rating
 
-save_path = value('save_path',None)
+save_path = value('save_path', None)
 if save_path is None:
-    logger.error(LogMsg.APP_CONFIG_INCORRECT,{'save_path':None})
-    raise Http_error(500,Message.APP_CONFIG_MISSING)
+    logger.error(LogMsg.APP_CONFIG_INCORRECT, {'save_path': None})
+    raise Http_error(500, Message.APP_CONFIG_MISSING)
 
 
 def add(data, db_session, username):
@@ -225,40 +225,76 @@ def rating_to_dict(model):
 
 
 def to_csv(db_session, username):
-
     logger.debug(LogMsg.PERMISSION_CHECK, username)
     validate_permissions_and_access(username, db_session, 'GET_MOVIE')
     logger.debug(LogMsg.PERMISSION_VERIFIED)
+    data = {'sort': 'creation_date-'}
+    result = Rating.mongoquery(
+        db_session.query(Rating)).query(
+        **data).end().all()
+    if len(result) < 1:
+        logger.error(LogMsg.NO_CONTENT_FOR_REPORT, 'Ratings')
+        raise Http_error(404, Message.NO_CONTENT_IN_TABLE)
+    final_res = {}
+    for item in result:
+        final_res.update(csv_model_to_dict(item, db_session))
+    keys = final_res[0].keys()
 
-
-    data =list( get_all({'sort':'creation_date-'}, db_session, username))
-    if len(data)<1:
-        logger.error(LogMsg.NO_CONTENT_FOR_REPORT,'Ratings')
-        raise Http_error(404,Message.NO_CONTENT_IN_TABLE)
-
-    for item in data:
-        person = item.get('person')
-        movie = item.get('movie')
-        user = user_by_person(item.get('person_id'), db_session)
-        if user is not None:
-            item['voter_username'] = user.username
-
-        item['voter_name'] = person.get('full_name')
-        item['title'] = movie.get('title')
-        item['director'] = movie.get('director')
-        item['writer'] = movie.get('writer')
-        item['producer'] = movie.get('producer')
-        del item['person']
-        del item['movie']
-        del item['id']
-        del item['person_id']
-        del item['movie_id']
-
-    keys = data[0].keys()
-
-    with open('{}/ratings.csv'.format(save_path), 'w', encoding='utf8', newline='') as output_file:
+    with open('{}/ratings.csv'.format(save_path), 'w', encoding='utf8',
+              newline='') as output_file:
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
-        dict_writer.writerows(data)
-    response.add_header('Content-Disposition','attachment; filename=report.csv')
+        dict_writer.writerows(final_res)
+    response.add_header('Content-Disposition', 'attachment; filename=report.csv')
     return return_and_delete_file('ratings.csv')
+
+
+def csv_model_to_dict(model, db_session):
+    res = {}
+    user = user_by_person(model.person_id, db_session)
+    if user is not None:
+        res['شماره موبایل'] = user.username
+
+    items = {
+        'نام ارزیاب': model.person.full_name,
+        'نمره کلی': model.overall_rate,
+        'عنوان فیلم': model.movie.title,
+        'کارگردان': model.movie.director,
+        'نویسنده': model.movie.writer,
+        'تهیه کننده': model.movie.producer,
+        'توضیحات': model.comment,
+        'داستان': model.novel,
+        'شخصیت پردازی': model.character,
+        'منطق': model.reason,
+        'موسیقی': model.music,
+        'صدا': model.sound,
+        'تصویر': model.visualization,
+        'تدوین': model.editing,
+        'بازیگری': model.acting,
+        'کارگردانی': model.directing,
+        'تصویر صحیح از دشمن': model.true_vision_of_enemy,
+        'سبک زندگی ایرانی': model.iranian_life_style,
+        'امید': model.hope,
+        'تصویر روشن از آینده جامعه': model.bright_future_exposure,
+        'خدامحوری': model.theism,
+        'ظلمستیزی و عدالتخواهی': model.justice_seeking,
+        'مواجهه اصولی با مسأله زن': model.feminism_exposure,
+        'اخلاق فردی و اجتماعی': model.individual_social_behavior,
+        'نهاد خانواده': model.family_subject,
+        'ترویج مصرف مشروبات الکلی': model.alcoholic_promotion,
+        'ترویج قمار': model.gambling_promotion,
+        'دعوت به نقض قانون': model.breaking_law_encouragement,
+        'دعوت به خودکشی': model.suicide_encouragement,
+        'محتوای ترسناک': model.horror_content,
+        'ترویج مصرف دخانیات و مواد مخدر': model.addiction_promotion,
+        'پوشش نامناسب': model.unsuitable_wearing,
+        'میزان نمایش محتوای جنسی': model.sexual_content,
+        'میزان و شدت بددهانی و فحاشی': model.insulting_range,
+        'میزان و شدت خشونت': model.violence_range,
+        'روایت صحیح از تاریخ': model.true_historiography,
+        'توضیحات تکمیلی داستان': model.question_1,
+        'توضیحات تکمیلی تکنیک': model.question_2,
+        'توضیحات تکمیلی هنجار': model.question_3,
+        'توضیحات تکمیلی درونمایه': model.question_4}
+    res.update(items)
+    return res
