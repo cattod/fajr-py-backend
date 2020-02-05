@@ -317,7 +317,7 @@ def model_to_dict(obj):
     object_dict = dict((name, getattr(obj, name)) for name in dir(obj) if
                        (not name.startswith('_')) and not name.startswith(
                            'mongo') and not name.startswith(
-                           'AppenderQuery')and not name.startswith(
+                           'versions')and not name.startswith(
                            'create_query')) if not isinstance(obj,
                                                               dict) else obj
 
